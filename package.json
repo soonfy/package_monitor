@@ -22,10 +22,7 @@
   },
   "homepage": "https://github.com/soonfy/soonfy_monitor#readme",
   "devDependencies": {
-    "@types/mongoose": "^4.7.13",
     "@types/node": "^7.0.22"
   },
-  "dependencies": {
-    "mongoose": "^4.10.2"
-  }
+  "dependencies": {}
 }
