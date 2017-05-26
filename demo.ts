@@ -6,7 +6,7 @@ mongoose.connect('mongodb://localhost/demo');
 const test = async () => {
   try {
     console.log(`test.`);
-    let task = await monitor.updateDB();
+    let task = await monitor.update(mongoose);
     console.log(task);
     process.exit();
   } catch (error) {

@@ -78,28 +78,51 @@ const getPC = () => {
 
 /**
  *
+ *  需要输入参数 mongoose
  *  更新mongodb
  *
  */
-const updateDB = async () => {
+const update = async (mongoose) => {
   try {
     let cwd = process.cwd(),
       pwd = process.argv[1],
       task = path.relative(cwd, pwd),
       {name, ip, mac} = getPC();
-    let temp = {
+
+    const Schema = mongoose.Schema;
+    const monitorSchema = new Schema({
+      task: {
+        type: String,
+      },
+      name: {
+        type: String,
+      },
+      ip: {
+        type: String,
+      },
+      mac: {
+        type: String,
+      },
+      update: {
+        type: Date,
+      },
+    })
+    const monitorModel = mongoose.model('MONITOR', monitorSchema, 'monitors');
+
+    let monitor = await monitorModel.findOneAndUpdate({
       task,
       name,
       ip,
       mac
-    }
-    let monitor = await monitorModel.findOneAndUpdate(temp, { $set: {
-      task,
-      name,
-      ip,
-      mac,
-      update: new Date()
-    } }, { upsert: true, new: true });
+    }, {
+        $set: {
+          task,
+          name,
+          ip,
+          mac,
+          update: new Date()
+        }
+      }, { upsert: true, new: true });
     return monitor;
   } catch (error) {
     console.error(error);
@@ -110,5 +133,5 @@ const updateDB = async () => {
 export {
   getIP,
   getPC,
-  updateDB
+  update
 }
