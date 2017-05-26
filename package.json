@@ -1,0 +1,31 @@
+{
+  "name": "monitor-node",
+  "version": "1.0.0",
+  "description": "monitor crawler",
+  "main": "main/index.js",
+  "scripts": {
+    "test": "node main/demo.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/soonfy/soonfy_monitor.git"
+  },
+  "keywords": [
+    "monitor",
+    "crawler",
+    "node"
+  ],
+  "author": "soonfy <soonfy@163.com> (https://github.com/soonfy)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/soonfy/soonfy_monitor/issues"
+  },
+  "homepage": "https://github.com/soonfy/soonfy_monitor#readme",
+  "devDependencies": {
+    "@types/mongoose": "^4.7.13",
+    "@types/node": "^7.0.22"
+  },
+  "dependencies": {
+    "mongoose": "^4.10.2"
+  }
+}
