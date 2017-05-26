@@ -1,11 +1,12 @@
 import * as os from 'os';
 import * as path from 'path';
-import { monitorModel } from './model';
 
 export interface PC {
   name: string,
   ip: string,
-  mac: string
+  mac: string,
+  task: string,
+  date: Date
 }
 
 /**
@@ -64,10 +65,15 @@ const getPC = () => {
     let interfaces = os.networkInterfaces();
     let name = os.hostname();
     let map = getIP(interfaces);
+    let cwd = process.cwd(),
+      pwd = process.argv[1],
+      task = path.relative(cwd, pwd)
     let pc: PC = {
-      name: name,
+      name,
       ip: map.ip,
-      mac: map.mac
+      mac: map.mac,
+      task,
+      date: new Date()
     };
     return pc;
   } catch (error) {
@@ -87,10 +93,7 @@ let STATUS = true,
  */
 const update = async (mongoose) => {
   try {
-    let cwd = process.cwd(),
-      pwd = process.argv[1],
-      task = path.relative(cwd, pwd),
-      {name, ip, mac} = getPC();
+    let pc = getPC();
 
     if (STATUS) {
       const Schema = mongoose.Schema;
@@ -107,28 +110,22 @@ const update = async (mongoose) => {
         mac: {
           type: String,
         },
-        update: {
+        date: {
           type: Date,
         },
       })
+      monitorSchema.index({ task: 1, name: 1, ip: 1, mac: 1 });
       Model = mongoose.model('MONITOR', monitorSchema, 'monitors');
       STATUS = !STATUS;
     }
 
-
     let monitor = await Model.findOneAndUpdate({
-      task,
-      name,
-      ip,
-      mac
+      task: pc.task,
+      name: pc.name,
+      ip: pc.ip,
+      mac: pc.mac
     }, {
-        $set: {
-          task,
-          name,
-          ip,
-          mac,
-          update: new Date()
-        }
+        $set: pc
       }, { upsert: true, new: true });
     return monitor;
   } catch (error) {
