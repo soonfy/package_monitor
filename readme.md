@@ -13,6 +13,7 @@
   ```
   let monitor = require('monitor-node');
   let mongoose = require('mongoose');
+  mongoose.connect(log-uri);
   let task = monitor.update(mongoose);
   console.log(task);
   ```
