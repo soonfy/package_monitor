@@ -17,10 +17,7 @@ export interface PC {
 const getIP = (interfaces = os.networkInterfaces()) => {
   try {
     const pppREG = /ppp(\d+)/gim;
-    let map = {
-      ip: 'string',
-      mac: 'string'
-    };
+    let map;
     for (let dev in interfaces) {
       let ppp = dev.match(pppREG);
       if (ppp) {
@@ -36,6 +33,9 @@ const getIP = (interfaces = os.networkInterfaces()) => {
         }
         break;
       } else {
+        if (map) {
+          continue;
+        }
         let iface = interfaces[dev];
         for (let i = 0, len = iface.length; i < len; i++) {
           let alias = iface[i];
