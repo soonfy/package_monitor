@@ -76,6 +76,9 @@ const getPC = () => {
   }
 }
 
+let STATUS = true,
+  Model;
+
 /**
  *
  *  需要输入参数 mongoose
@@ -89,27 +92,31 @@ const update = async (mongoose) => {
       task = path.relative(cwd, pwd),
       {name, ip, mac} = getPC();
 
-    const Schema = mongoose.Schema;
-    const monitorSchema = new Schema({
-      task: {
-        type: String,
-      },
-      name: {
-        type: String,
-      },
-      ip: {
-        type: String,
-      },
-      mac: {
-        type: String,
-      },
-      update: {
-        type: Date,
-      },
-    })
-    const monitorModel = mongoose.model('MONITOR', monitorSchema, 'monitors');
+    if (STATUS) {
+      const Schema = mongoose.Schema;
+      const monitorSchema = new Schema({
+        task: {
+          type: String,
+        },
+        name: {
+          type: String,
+        },
+        ip: {
+          type: String,
+        },
+        mac: {
+          type: String,
+        },
+        update: {
+          type: Date,
+        },
+      })
+      Model = mongoose.model('MONITOR', monitorSchema, 'monitors');
+      STATUS = !STATUS;
+    }
 
-    let monitor = await monitorModel.findOneAndUpdate({
+
+    let monitor = await Model.findOneAndUpdate({
       task,
       name,
       ip,
