@@ -62,6 +62,7 @@ const getIP = (interfaces = os.networkInterfaces()) => {
  */
 const getPC = () => {
   try {
+    let hostname = os.hostname();
     let user = os.userInfo();
     let {username, uid, gid} = user;
     let parent = module.parent, cwd = process.cwd(),task;
@@ -74,7 +75,7 @@ const getPC = () => {
       task = cwd + '/' + parent;
     }
     let pc: PC = {
-      username,
+      username: username + '@' + hostname,
       uid,
       gid,
       task,
@@ -119,7 +120,7 @@ const update = async (mongoose) => {
           type: Date,
         },
       })
-      monitorSchema.index({ task: 1, uid: 1, gid: 1 });
+      monitorSchema.index({ task: 1, username: 1, uid: 1, gid: 1 });
       monitorSchema.index({ date: 1 }, { expireAfterSeconds: 3600 });
       Model = mongoose.model('MONITOR', monitorSchema, 'monitors');
       STATUS = !STATUS;
@@ -127,6 +128,7 @@ const update = async (mongoose) => {
 
     let monitor = await Model.findOneAndUpdate({
       task: pc.task,
+      username: pc.username,
       uid: pc.uid,
       gid: pc.gid
     }, {
