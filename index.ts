@@ -64,8 +64,15 @@ const getPC = () => {
   try {
     let user = os.userInfo();
     let {username, uid, gid} = user;
-    let cwd = process.cwd(),
-      task = cwd + '/' + module.parent;
+    let parent = module.parent, cwd = process.cwd(),task;
+    if (typeof parent === 'string') {
+      task = cwd + '/' + parent;
+    } else if (parent && typeof parent === 'object') {
+      task = parent.filename;
+    } else {
+      // default
+      task = cwd + '/' + parent;
+    }
     let pc: PC = {
       username,
       uid,
