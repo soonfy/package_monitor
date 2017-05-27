@@ -6,8 +6,8 @@
 
 ### getPC()
 
-### update(mongoose)
-参数是 **mongoose对象**或者**connection实例**，监控日志存储在 **monitors集合**  
+### update(argv)
+参数 argv 是 **mongoose对象**或者**connection实例**，监控日志存储在 **monitors集合**  
 
 ## 示例
   ```
