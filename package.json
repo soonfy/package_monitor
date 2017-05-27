@@ -1,6 +1,6 @@
 {
   "name": "monitor-node",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "monitor crawler",
   "main": "main/index.js",
   "scripts": {
