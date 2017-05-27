@@ -2,9 +2,9 @@ import * as os from 'os';
 import * as path from 'path';
 
 export interface PC {
-  name: string,
-  ip: string,
-  mac: string,
+  username: string,
+  uid: number,
+  gid: number,
   task: string,
   date: Date
 }
@@ -62,16 +62,14 @@ const getIP = (interfaces = os.networkInterfaces()) => {
  */
 const getPC = () => {
   try {
-    let interfaces = os.networkInterfaces();
-    let name = os.hostname();
-    let map = getIP(interfaces);
+    let user = os.userInfo();
+    let {username, uid, gid} = user;
     let cwd = process.cwd(),
-      pwd = process.argv[1],
-      task = path.relative(cwd, pwd)
+      task = cwd + '/' + module.parent;
     let pc: PC = {
-      name,
-      ip: map.ip,
-      mac: map.mac,
+      username,
+      uid,
+      gid,
       task,
       date: new Date()
     };
@@ -101,29 +99,29 @@ const update = async (mongoose) => {
         task: {
           type: String,
         },
-        name: {
+        username: {
           type: String,
         },
-        ip: {
-          type: String,
+        uid: {
+          type: Number,
         },
-        mac: {
-          type: String,
+        gid: {
+          type: Number,
         },
         date: {
           type: Date,
         },
       })
-      monitorSchema.index({ task: 1, name: 1, ip: 1, mac: 1 });
+      monitorSchema.index({ task: 1, uid: 1, gid: 1 });
+      monitorSchema.index({ date: 1 }, { expireAfterSeconds: 3600 });
       Model = mongoose.model('MONITOR', monitorSchema, 'monitors');
       STATUS = !STATUS;
     }
 
     let monitor = await Model.findOneAndUpdate({
       task: pc.task,
-      name: pc.name,
-      ip: pc.ip,
-      mac: pc.mac
+      uid: pc.uid,
+      gid: pc.gid
     }, {
         $set: pc
       }, { upsert: true, new: true });
