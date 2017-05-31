@@ -3,6 +3,7 @@ import * as path from 'path';
 
 export interface PC {
   username: string,
+  pid: number,
   uid: number,
   gid: number,
   task: string,
@@ -64,18 +65,20 @@ const getPC = () => {
   try {
     let hostname = os.hostname();
     let user = os.userInfo();
-    let {username, uid, gid} = user;
+    let {username = 'monitor', uid = 0, gid = 0} = user;
+    let pid = process.pid || 0;
     let parent = module.parent, cwd = process.cwd(),task;
     if (typeof parent === 'string') {
-      task = cwd + '/' + parent;
+      task = path.basename(parent);
     } else if (parent && typeof parent === 'object') {
-      task = parent.filename;
+      task = path.basename(parent.filename);
     } else {
       // default
-      task = cwd + '/' + parent;
+      task = path.basename(parent + '');
     }
     let pc: PC = {
       username: username + '@' + hostname,
+      pid,
       uid,
       gid,
       task,
@@ -110,6 +113,9 @@ const update = async (mongoose) => {
         username: {
           type: String,
         },
+        pid: {
+          type: Number,
+        },
         uid: {
           type: Number,
         },
@@ -120,7 +126,7 @@ const update = async (mongoose) => {
           type: Date,
         },
       })
-      monitorSchema.index({ task: 1, username: 1, uid: 1, gid: 1 });
+      monitorSchema.index({ task: 1, username: 1, pid: 1, uid: 1, gid: 1 });
       monitorSchema.index({ date: 1 }, { expireAfterSeconds: 3600 });
       Model = mongoose.model('MONITOR', monitorSchema, 'monitors');
       STATUS = !STATUS;
@@ -129,8 +135,8 @@ const update = async (mongoose) => {
     let monitor = await Model.findOneAndUpdate({
       task: pc.task,
       username: pc.username,
-      uid: pc.uid,
-      gid: pc.gid
+      pid: pc.pid,
+      uid: pc.uid
     }, {
         $set: pc
       }, { upsert: true, new: true });
