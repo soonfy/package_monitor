@@ -1,5 +1,6 @@
 import * as os from 'os';
 import * as path from 'path';
+import * as mongoose from 'mongoose';
 
 export interface PC {
   username: string,
@@ -96,11 +97,11 @@ let STATUS = true,
 
 /**
  *
- *  需要输入参数 mongoose
+ *  需要输入参数 connection
  *  更新mongodb
  *
  */
-const update = async (mongoose) => {
+const update = async (connection) => {
   try {
     let pc = getPC();
 
@@ -128,7 +129,7 @@ const update = async (mongoose) => {
       })
       monitorSchema.index({ task: 1, username: 1, pid: 1, uid: 1, gid: 1 });
       monitorSchema.index({ date: 1 }, { expireAfterSeconds: 3600 });
-      Model = mongoose.model('MONITOR', monitorSchema, 'monitors');
+      Model = connection.model('MONITOR', monitorSchema, 'monitors');
       STATUS = !STATUS;
     }
 
